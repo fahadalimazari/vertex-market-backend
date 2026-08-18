@@ -1,14 +1,21 @@
 import dotenv from 'dotenv';
+import serverless from 'serverless-http';
 import connectDB from './src/config/db.js';
 import app from './src/app.js';
 
 dotenv.config();
 
-// Connect to MongoDB
-connectDB();
+const fetchHandler = serverless(app);
+let isDBConnected = false;
 
-const PORT = process.env.PORT || 5000;
-
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+export default {
+  async fetch(request, env, ctx) {
+    if (!isDBConnected) {
+      // In Cloudflare Workers, env variables are passed in the `env` object
+      // We pass the URI explicitly if available, otherwise it falls back to process.env
+      await connectDB(env.MONGO_URI);
+      isDBConnected = true;
+    }
+    return fetchHandler(request, ctx);
+  }
+};

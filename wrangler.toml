@@ -1,0 +1,9 @@
+name = "vertex-market-backend"
+main = "server.js"
+compatibility_date = "2024-08-18"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+# Add environment variables here or via Cloudflare Dashboard
+# MONGO_URI = ""
+# JWT_SECRET = ""
