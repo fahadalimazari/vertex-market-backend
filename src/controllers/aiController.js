@@ -14,9 +14,33 @@ export const getAIRecommendations = asyncHandler(async (req, res) => {
   }
 
   try {
-    // Call Python AI Service
-    const aiResponse = await axios.post('http://127.0.0.1:8000/recommend', { query });
-    const aiData = aiResponse.data;
+    const q = query.toLowerCase();
+    const aiData = {
+      intent: 'recommendation',
+      category: '',
+      budget: null,
+      brand: null,
+      keywords: []
+    };
+
+    if (q.includes('laptop') || q.includes('macbook')) {
+      aiData.category = 'laptops';
+      if (q.includes('gaming')) aiData.keywords.push('gaming');
+    } else if (q.includes('phone') || q.includes('smartphone') || q.includes('iphone')) {
+      aiData.category = 'smartphones';
+    } else if (q.includes('shoe') || q.includes('sneaker')) {
+      aiData.category = 'shoes';
+    }
+
+    const words = q.split(' ');
+    for (let i = 0; i < words.length; i++) {
+      if (words[i] === 'under' && i + 1 < words.length) {
+        const amount = parseFloat(words[i + 1].replace('$', ''));
+        if (!isNaN(amount)) {
+          aiData.budget = amount;
+        }
+      }
+    }
 
     // Build MongoDB query based on AI extraction
     const mongoQuery = { status: { $in: ['Active', 'Published'] } };
