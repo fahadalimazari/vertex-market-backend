@@ -1,0 +1,1 @@
+import mongoose from 'mongoose'; import Product from './src/models/Product.js'; mongoose.connect('mongodb://127.0.0.1:27017/vertex-market').then(async () => { const products = await Product.find({}, 'name status isPublished stock'); console.log('Products:', JSON.stringify(products, null, 2)); process.exit(0); }).catch(console.error);

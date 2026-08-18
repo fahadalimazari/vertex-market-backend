@@ -1,0 +1,1 @@
+import mongoose from 'mongoose'; import Product from './src/models/Product.js'; mongoose.connect('mongodb://127.0.0.1:27017/vertexmarket').then(async () => { const res = await Product.updateMany({ status: { $in: ['Active', 'Published', 'Approved'] } }, { $set: { isPublished: true, stock: 10 } }); console.log('Updated:', res); process.exit(0); }).catch(console.error);
